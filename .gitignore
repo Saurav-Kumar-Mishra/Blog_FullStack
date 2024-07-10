@@ -1,0 +1,21 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Build output
+dist/
+build/
+
+# Dependency directories
+my-project/node_modules/
+Backend/node_modules/
+
+# Environment variables
+Backend/.env
+
+# Optional npm cache directory
+.npm
+
+# MacOS system files
+.DS_Store
