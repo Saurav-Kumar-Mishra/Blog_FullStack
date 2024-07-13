@@ -1,5 +1,5 @@
 const mongoose=require('mongoose')
-
+const bcrypt=require('bcrypt')
 const userSchema=mongoose.Schema({
 
   name:{
@@ -29,7 +29,18 @@ const userSchema=mongoose.Schema({
     type:String,
     enum:["Admin","Blogger","Reader"]
   },
-})
+  isVerified:{
+    type:Boolean,
+    required:true,
+    default:false,
+  },
+},{timestamps:true})
+
+userSchema.pre("save",async function() {
+ this.password= await bcrypt.hash(this.password,10);
+  })
  
 
 module.exports=mongoose.model("user",userSchema);
+
+

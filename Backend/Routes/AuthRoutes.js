@@ -3,13 +3,14 @@ const express=require('express')
 const Router=express.Router();
 const {auth,isReader,isAdmin,isBlogger}=require('../Middlewares/AuthMiddleware.js')
 
-const {login,signUp,logout,verifySession}=require('../Controller/Auth.js');
+const {login,signUp,logout,verifyUser}=require('../Controller/Auth.js');
 // const { verify } = require('jsonwebtoken');
 
 Router.post("/signup",signUp);
 Router.post("/login",login);
 Router.get("/logout",logout);
-Router.get('/verifySession',verifySession);
+// Router.get('/verifySession',verifySession);
+Router.get('/verifyUser/:token',verifyUser);
 
 // protected routes
 
