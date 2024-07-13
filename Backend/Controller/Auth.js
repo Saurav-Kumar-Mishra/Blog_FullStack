@@ -1,18 +1,15 @@
-const bcrypt = require("bcrypt");
 const user = require("../Models/user.js");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const asyncErrorHandler = require("../utils/asyncErrorHandler.js");
 const {
-  NotFoundError,
   ValidationError,
   UnauthorizedError,
   UserAlreadyExistsError,
-  CustomApiError,
   BadRequestError,
 } = require("../Errors/error.js");
 const nodemailer = require("nodemailer");
-const  generateToken  = require("../utils/generateToken.js");
+const generateToken = require("../utils/generateToken.js");
 const transporter = nodemailer.createTransport({
   host: process.env.MAIL_HOST,
   port: 587,
@@ -104,20 +101,19 @@ async function login(req, res) {
   if (!userExist) {
     throw new UnauthorizedError();
   }
-  
+
   if (!userExist.isVerified) {
     throw new UnauthorizedError("user is not verified");
   }
 
-  const token =await generateToken(userExist);
-  
+  const token = await generateToken(userExist);
 
-  console.log("loginToken",token)
-  return res.json({
-    success:true,
-    message:"Successfull Login",
-    token:token
-  })
+  console.log("loginToken", token);
+  return res.json({ 
+    success: true,
+    message: "Successfull Login",
+    token: token,
+  });
 
   // const payload = {
   //   email: userExist.email,
@@ -128,7 +124,7 @@ async function login(req, res) {
   //   expires: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
   //   httpOnly: true,
   // };
-  
+
   // if (await bcrypt.compare(password, userExist.password)) {
   //   let token = jwt.sign(payload, process.env.SECRET, { expiresIn: "4h" });
 
@@ -146,7 +142,6 @@ async function login(req, res) {
   // } else {
   //   throw new UnauthorizedError("password do not match");
   // }
-  
 }
 
 function logout(req, res) {

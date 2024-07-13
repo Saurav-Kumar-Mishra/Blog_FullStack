@@ -5,7 +5,8 @@ require("dotenv").config();
 const generateToken = async (userExist) => {
   const jwtToken = jwt.sign(
     { email: userExist.email, role: userExist.role, id: userExist._id },
-    process.env.SECRET
+    process.env.SECRET,
+    {expiresIn:"1d"}
   );
 
   try {

@@ -4,8 +4,7 @@ class AppError extends Error {
     this.statusCode = statusCode;
     this.status = `${statusCode}`.startsWith("4") ? "fail" : "error";
     this.isOperational = true;
-    // Error.captureStackTrace(this, this.constructor);
-    console.log("object")
+    
   }
 }
 
@@ -18,7 +17,6 @@ class NotFoundError extends AppError {
 class ValidationError extends AppError {
   constructor(message = "Validation Error",status=400) {
     super(message, status);
-    console.log("validation error")
   }
 }
 

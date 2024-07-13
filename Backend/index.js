@@ -12,6 +12,7 @@ const fileUpload=require('express-fileupload');
 const cloudinaryConnect=require('./Config/cloudinaryDB.js');
 const cookieParser=require('cookie-parser');
 const ErrorMiddleware =require('./Middlewares/ErrorMiddleware.js')
+const blogRouter = require('./Routes/blogRoutes.js')
 
 App.use(cors());
 App.use(fileUpload({
@@ -28,6 +29,7 @@ App.listen(PORT, () => {
 
 App.use("/api/v1", router); 
 App.use("/api/v1", fileRoute);
+App.use("/api/v1",blogRouter)
 App.use(ErrorMiddleware);
 
 App.get("/", (req, res) => {

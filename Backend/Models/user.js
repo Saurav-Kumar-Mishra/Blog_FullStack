@@ -37,7 +37,7 @@ const userSchema=mongoose.Schema({
 },{timestamps:true})
 
 userSchema.pre("save",async function() {
- this.password= await bcrypt.hash(this.password,10);
+ this.password=  bcrypt.hash(this.password,10);
   })
  
 
