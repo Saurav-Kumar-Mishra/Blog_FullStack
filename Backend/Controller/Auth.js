@@ -10,6 +10,8 @@ const {
 } = require("../Errors/error.js");
 const nodemailer = require("nodemailer");
 const generateToken = require("../utils/generateToken.js");
+const Token = require("../Models/token.js");
+
 const transporter = nodemailer.createTransport({
   host: process.env.MAIL_HOST,
   port: 587,
@@ -109,10 +111,11 @@ async function login(req, res) {
   const token = await generateToken(userExist);
 
   console.log("loginToken", token);
-  return res.json({ 
+  return res.json({
     success: true,
     message: "Successfull Login",
     token: token,
+    role:userExist.role
   });
 
   // const payload = {
@@ -144,22 +147,25 @@ async function login(req, res) {
   // }
 }
 
-function logout(req, res) {
-  try {
-    res.clearCookie("token");
-    console.log("cookie deleted");
-    return res.status(200).json({
-      success: true,
-      message: "logout successfull",
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(200).json({
-      success: false,
-      message: "logout faliure",
-    });
+async function logout(req, res) {
+  const token = req.headers.authorization.split(" ")[1];
+  res.clearCookie("token");
+
+  if (!token) {
+    throw new BadRequestError("no token recieved");
   }
+
+  const decodeToken = jwt.verify(token, process.env.SECRET);
+
+  await Token.findOneAndDelete({ user: decodeToken.id });
+
+  return res.status(200).json({
+    success: true,
+    message: "logout successfull",
+  });
 }
+
+
 async function verifyUser(req, res) {
   const { token } = req.params;
   console.log(token);

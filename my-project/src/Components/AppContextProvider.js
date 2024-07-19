@@ -2,7 +2,7 @@ import React, { createContext, useContext} from "react";
 
 export const User = createContext();
 
-export default function AppContextProvider({ children }) {
+export default function AppContextProvider({ children }) { 
   const [user, setUser]=React.useState(null);
   console.log(user);
   const value = {

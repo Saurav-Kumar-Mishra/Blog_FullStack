@@ -4,7 +4,7 @@ const ErrorMiddleware=(error,req,res,next)=>
   console.log("error middleware");
   if(error instanceof AppError)
   {
-  console.log("instance of ");
+  console.log("instace of ",error.message);
     return res.json({
       message:error.message,
       statusCode:error.statusCode,

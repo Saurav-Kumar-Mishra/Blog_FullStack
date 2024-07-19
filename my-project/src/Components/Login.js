@@ -1,15 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { User } from "./AppContextProvider";
+import { login } from "../utils/BlogAsyncThunkAPI";
+import { useDispatch } from "react-redux";
+
 
 const Login = () => {
-  const { isLogged, setIsLogged } = React.useContext(User);
-  console.log(isLogged);
   const navigate = useNavigate();
-
+  const dispatch= useDispatch();
   const [loginData, setLoginData] = React.useState({
     email: "",
     password: "",
@@ -26,56 +26,65 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await fetch("http://localhost:3009/api/v1/login", {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(loginData),
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        console.log(data.message);
-
-        toast.error(`${data.message}`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      } else {
-        let role = data.userExist.role;
-        let token = data.token;
-        document.cookie = `BlogTankRole=${role}`;
-        document.cookie = `token=${token}`;
-        if (role === "Blogger") navigate("/dashboard");
-        else if (role === "Reader") navigate("/blogs");
-        console.log(role);
-        setIsLogged(true);
-        toast.success(`🦄 ${data.message}`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        // navigate("/");
+    const resultAction = await dispatch(login(loginData));
+    if (login.fulfilled.match(resultAction)) {
+      
+      const role = resultAction.payload.role;
+      if (role === 'Blogger') {
+        navigate('/dashboard');
+      } else if (role === 'Reader') {
+        navigate('/blogs');
       }
-    } catch (error) {
-      console.log("error ", error);
     }
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   dispatch(login(loginData))
+    // try {
+    //   const response = await fetch("http://localhost:3009/api/v1/login", {
+    //     method: "post",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(loginData),
+    //   });
+    //   const data = await response.json();
+    //   if (!response.ok) {
+    //     toast.error(`${data.message}`, {
+    //       position: "top-right",
+    //       autoClose: 5000,
+    //       hideProgressBar: false,
+    //       closeOnClick: true,
+    //       pauseOnHover: true,
+    //       draggable: true,
+    //       progress: undefined,
+    //       theme: "light",
+    //     });
+    //   } else {
+    //     let role = data.role;
+    //     let token = data.token;
+    //     document.cookie = `BlogTankRole=${role}`;
+    //     document.cookie = `token=${token}`;
+    //     if (role === "Blogger") navigate("/dashboard");
+    //     else if (role === "Reader") navigate("/blogs");
+    //     toast.success(`🦄 ${data.message}`, {
+    //       position: "top-right",
+    //       autoClose: 5000,
+    //       hideProgressBar: false,
+    //       closeOnClick: true,
+    //       pauseOnHover: true,
+    //       draggable: true,
+    //       progress: undefined,
+    //       theme: "light",
+    //     });
+    //   }
+    // } catch (error) {
+    //   console.log("error ", error);
+    // }
+  // };
+
   const handleForgotPassword = () => {
-    // Here you can implement the logic to handle forgot password functionality
     console.log("Forgot Password clicked");
   };
 
@@ -85,16 +94,16 @@ const Login = () => {
         backgroundImage: "url(./loginBackground.jpg)",
         backgroundSize: "cover",
       }}
-      className="w-screen h-[91vh] flex flex-col justify-start items-center"
+      className="w-screen h-[91vh] flex flex-col justify-start items-center p-4"
     >
-      <img src="./logo2.png" width="250px" alt="img not found" />
-      <div className="max-w-md mx-auto pt-6 text-black">
-        <h2 className="text-4xl font-mono font-thin text-green-700 mb-4 text-black">
+      <img src="./logo2.png" width="250px" alt="img not found" className="mb-4" />
+      <div className="w-full max-w-md bg-white rounded-lg p-6 shadow-md">
+        <h2 className="text-4xl font-mono font-thin text-green-700 mb-4 text-center">
           Login to your account
         </h2>
-        <h2 className="text-xl  mb-4 text-black font-bold">
+        <h2 className="text-xl mb-4 text-center">
           Don't have an account?{" "}
-          <Link to="/signUp" className="text-blue-700 text-xl font-bold">
+          <Link to="/signUp" className="text-blue-700 font-bold">
             signUp here
           </Link>
         </h2>
@@ -127,7 +136,7 @@ const Login = () => {
               required
             />
           </div>
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mt-4">
             <button
               type="submit"
               className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
@@ -137,7 +146,7 @@ const Login = () => {
             <button
               type="button"
               onClick={handleForgotPassword}
-              className="text-blue-500 hover:underline focus:outline-none"
+              className="text-blue-500 hover:underline focus:outline-none mt-2 md:mt-0"
             >
               Forgot Password?
             </button>

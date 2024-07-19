@@ -5,7 +5,7 @@ const userSchema=mongoose.Schema({
   name:{
     type:String,
     required:true,
-    trim:true,
+    trim:true, 
     unique:true
   },
   email:{
@@ -25,6 +25,11 @@ const userSchema=mongoose.Schema({
     type:String,
     required:true
   },
+  posts:[{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:'post',
+    required: true
+  }],
   role:{
     type:String,
     enum:["Admin","Blogger","Reader"]
@@ -37,6 +42,7 @@ const userSchema=mongoose.Schema({
 },{timestamps:true})
 
 userSchema.pre("save",async function() {
+  
  this.password=  bcrypt.hash(this.password,10);
   })
  
