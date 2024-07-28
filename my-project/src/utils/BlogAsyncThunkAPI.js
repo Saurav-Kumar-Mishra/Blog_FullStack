@@ -30,8 +30,9 @@ export const login = createAsyncThunk(
         "http://localhost:3009/api/v1/login",
         data
       );
+      console.log('success',response.data.success)
       if (!response.data.success) {
-        toast.error(data.message, {
+        toast.error(response.data.message, {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -43,6 +44,7 @@ export const login = createAsyncThunk(
         });
         return rejectWithValue(response.data.message);
       }
+      console.log(response.data)
       return response.data;
     } catch (error) {
       console.log(error);
@@ -54,14 +56,13 @@ export const login = createAsyncThunk(
 export const logout = createAsyncThunk(
   "Logout",
   async (data, { rejectWithValue }) => {
-    console.log(data)
     try {
       const response = await axios.post(
         "http://localhost:3009/api/v1/logout",
         data
       );
       if (!response.data.success) {
-        toast.error(data.message, {
+        toast.error(response.data.message, {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -100,6 +101,26 @@ export const getPosts = createAsyncThunk(
           },
         }
       );
+      return response.data;
+    } catch (error) {
+      console.log("asyncThinkApiError", error);
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const fetchAllPosts = createAsyncThunk(
+  "fetchAllPosts",
+  async (token, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3009/api/v1/fetchallposts",
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
 
       return response.data;
     } catch (error) {
@@ -113,8 +134,7 @@ export const createPost = createAsyncThunk(
   "user/createPost",
   async ({ token, data }, { rejectWithValue }) => {
     try {
-      console.log(data);
-      const response = await axios.post(
+        const response = await axios.post(
         "http://localhost:3009/api/v1/createPost",
         data,
         {
@@ -152,19 +172,71 @@ export const updatePost = createAsyncThunk(
   }
 );
 
-export const deletePost = createAsyncThunk(
-  "user/deletePost",
-  async (token, postId, { rejectWithValue }) => {
+
+export const uploadProfilePic =  createAsyncThunk (
+  'user/uploadProfilePic',
+  async ({token,formData}, {rejectWithValue} ) => {
+    console.log(formData)
     try {
-      const response = await axios.delete(
-        "http://localhost:3009/api/v1/deletePost",
-        JSON.stringify(postId),
+      const response  =  await axios.post("http://localhost:3009/api/v1/imgFileUpload",
+        formData,
         {
-          headers: {
+          headers : {
             Authorization: "Bearer " + token,
           },
         }
       );
+      if(!response.data.success)
+        {
+          toast.error(response.data.message, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+          return rejectWithValue(response.data.message);
+        }
+        return response.data;
+
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(error);
+    }
+  }
+)
+
+export const deletePost = createAsyncThunk(
+  "user/deletePost",
+  async ({token, postId}, { rejectWithValue }) => {
+    try {
+      const response = await axios.delete(
+        "http://localhost:3009/api/v1/deletePost",
+        
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+          data: { postId }
+        },
+      );
+      if(!response.data.success)
+      {
+        toast.error(response.data.message, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return rejectWithValue(response.data.message);
+      }
       return response.data;
     } catch (error) {
       console.log(error);

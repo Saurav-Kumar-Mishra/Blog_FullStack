@@ -34,6 +34,9 @@ const userSchema=mongoose.Schema({
     type:String,
     enum:["Admin","Blogger","Reader"]
   },
+  profilePic:{
+    type:String
+  },
   isVerified:{
     type:Boolean,
     required:true,
@@ -41,10 +44,18 @@ const userSchema=mongoose.Schema({
   },
 },{timestamps:true})
 
-userSchema.pre("save",async function() {
-  
- this.password=  bcrypt.hash(this.password,10);
-  })
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) {
+    return next();
+  }
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
  
 
 module.exports=mongoose.model("user",userSchema);

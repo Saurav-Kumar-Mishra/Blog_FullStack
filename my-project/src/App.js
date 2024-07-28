@@ -18,10 +18,10 @@ function App() {
       <Navigation/> 
       {/* <Dashboard/> */}
       <Routes>
-        {/* <Route path="/" element={<BlogTemplete/>}/> */}
+        <Route path="/" element={<BlogTemplete/>}/>
         <Route path="/dashboard" element={<Dashboard/>} />
         <Route path="/blogs" element={<BlogTemplete/>} />
-        <Route path="/" element={<Login/>} />
+        {/* <Route path="/" element={<Login/>} /> */}
         <Route path="/login" element={<Login/>} />
         <Route path="/logout" element={<Logout/>} />
         <Route path="/signUp" element={<SignUp/>}/>

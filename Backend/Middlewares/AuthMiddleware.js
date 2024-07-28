@@ -3,24 +3,18 @@ require("dotenv").config();
 
 const auth = async (req, res, next) => {
   try {
-    // const token = req.cookies.token;
-
-    // if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-      const token = req.headers.authorization.split(' ')[1];
-      // req.token = token; // Attach token to request object
+    const token = req.headers.authorization.split(" ")[1];
+    // req.token = token; // Attach token to request object
     
-    console.log("token")
-    console.log(token);
     if (!token) {
       return res.status(401).json({
         success: false,
         message: "token Missing",
-        action:"login again"
+        action: "login again",
       });
     }
     try {
       const decodeToken = jwt.verify(token, process.env.SECRET);
-      console.log(decodeToken); 
       req.user = decodeToken;
     } catch (error) {
       console.log(error);
@@ -36,12 +30,10 @@ const auth = async (req, res, next) => {
     return res.status(401).json({
       success: false,
       message: "something  wrong",
-      
     });
   }
-}
-
-async function isAdmin(req, res, next) {  
+};
+async function isAdmin(req, res, next) {
   try {
     if (req.user.role !== "Admin") {
       return res.status(401).json({
@@ -62,16 +54,12 @@ async function isAdmin(req, res, next) {
 async function isBlogger(req, res, next) {
   console.log("hi");
   try {
-    
     if (req.user.role !== "Blogger") {
       return res.status(401).json({
         success: false,
         message: "you are unauthorized to access this page",
       });
-    }
-    else {
-      
-
+    } else {
       return res.status(200).json({
         success: true,
         message: "authorized",

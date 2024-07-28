@@ -1,24 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { TiTick } from "react-icons/ti";
 import { createPost, getUser } from "../utils/BlogAsyncThunkAPI";
-import { useSelector, useDispatch } from "react-redux";
-import { User } from "../features/userSlice";
-import { getAllPosts } from "../features/postsSlice";
+import { useDispatch } from "react-redux";
+
 import Cookie from "js-cookie";
 
 function CreatePost() {
+  const token = Cookie.get("token");
+  const dispatch = useDispatch();
+
   const [post, setPost] = useState({
-    postId: "",
     title: "",
     content: "",
   });
 
-  const token = Cookie.get("token");
-  const dispatch = useDispatch();
-  const user = useSelector(User);
-  const postCreated=useSelector(getAllPosts)
-  console.log(postCreated)
-  const totalBlogPosted = (user && user.posts.length + 1) || 0;
   useEffect(() => {
     dispatch(getUser(token));
   }, []);
@@ -27,11 +22,15 @@ function CreatePost() {
     const { name, value } = e.target;
     setPost({ ...post, [name]: value });
   };
-  console.log(post);
-  const handleSubmit = (e) => {
+  
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    dispatch(createPost({ token, data: { ...post, postId: totalBlogPosted } }));
+    await dispatch(createPost({ token, data: { ...post } }));
+    setPost({
+      ...post,
+      title: "",
+      content: "",
+    });
   };
 
   return (
@@ -54,7 +53,7 @@ function CreatePost() {
           <input
             type="number"
             disabled
-            value={totalBlogPosted}
+            value=""
             id="postId"
             name="postId"
             className="w-full rounded-xl p-2 indent-3 bg-gray-200"

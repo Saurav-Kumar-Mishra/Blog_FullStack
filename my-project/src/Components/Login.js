@@ -1,8 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-// import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { login } from "../utils/BlogAsyncThunkAPI";
 import { useDispatch } from "react-redux";
 
@@ -38,51 +36,7 @@ const Login = () => {
     }
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   dispatch(login(loginData))
-    // try {
-    //   const response = await fetch("http://localhost:3009/api/v1/login", {
-    //     method: "post",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(loginData),
-    //   });
-    //   const data = await response.json();
-    //   if (!response.ok) {
-    //     toast.error(`${data.message}`, {
-    //       position: "top-right",
-    //       autoClose: 5000,
-    //       hideProgressBar: false,
-    //       closeOnClick: true,
-    //       pauseOnHover: true,
-    //       draggable: true,
-    //       progress: undefined,
-    //       theme: "light",
-    //     });
-    //   } else {
-    //     let role = data.role;
-    //     let token = data.token;
-    //     document.cookie = `BlogTankRole=${role}`;
-    //     document.cookie = `token=${token}`;
-    //     if (role === "Blogger") navigate("/dashboard");
-    //     else if (role === "Reader") navigate("/blogs");
-    //     toast.success(`🦄 ${data.message}`, {
-    //       position: "top-right",
-    //       autoClose: 5000,
-    //       hideProgressBar: false,
-    //       closeOnClick: true,
-    //       pauseOnHover: true,
-    //       draggable: true,
-    //       progress: undefined,
-    //       theme: "light",
-    //     });
-    //   }
-    // } catch (error) {
-    //   console.log("error ", error);
-    // }
-  // };
+ 
 
   const handleForgotPassword = () => {
     console.log("Forgot Password clicked");
@@ -94,9 +48,9 @@ const Login = () => {
         backgroundImage: "url(./loginBackground.jpg)",
         backgroundSize: "cover",
       }}
-      className="w-screen h-[91vh] flex flex-col justify-start items-center p-4"
+      className="w-screen h-[92vh] flex flex-col justify-start items-center p-4 "
     >
-      <img src="./logo2.png" width="250px" alt="img not found" className="mb-4" />
+      <img src="./logo2.png" width="250px" alt="img not found" className="mb-4 mt-20" />
       <div className="w-full max-w-md bg-white rounded-lg p-6 shadow-md">
         <h2 className="text-4xl font-mono font-thin text-green-700 mb-4 text-center">
           Login to your account

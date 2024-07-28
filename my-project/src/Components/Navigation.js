@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../features/userSlice";
@@ -12,33 +12,37 @@ const NavBar = () => {
   const dispatch = useDispatch();
   const isLogged = useSelector((state) => state.user.isLoggedIn);
   const [menuOpen, setMenuOpen] = useState(false);
-  console.log(isLogged);
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
 
   function handleLogout() {
     dispatch(logout());
+    
+    // Remove the 'token' cookie and 'BlogTankRole'
+    localStorage.removeItem('token');
+    toast.success("🦄 Logout successful", {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+          console.log("object")
+          navigate("/login");
   }
-  useEffect(() => {
-    if (!isLogged) {
-      toast.success("🦄 Logout successful", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-      navigate("/login");
-    }
-  }, [isLogged]);
 
+console.log(isLogged)
   return (
-    <nav className="bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% text-white p-4">
-      <div className="container mx-auto flex justify-between items-center">
+    <nav className="bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% text-white p-4 fixed w-screen z-10 ">
+      <div className="container mx-auto flex justify-between items-center max-w-screen-lg">
+      {/* <div className="w-full flex justify-center animate-pulse  mt-10"> */}
+        {/* <img  src="./Logo2.png" width="200px" alt="img not found"/> */}
+        <div className="font-bold text-2xl">BLOG TANK</div>
+      {/* </div> */}
         <div className="flex items-center space-x-4">
           <Link to="/" className="hidden sm:block">
             HOME

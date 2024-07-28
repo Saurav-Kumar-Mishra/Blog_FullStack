@@ -6,36 +6,41 @@ import {
   getPostsStatus,
   getPostsErrors,
 } from "../features/postsSlice";
-import {getPosts} from "../utils/BlogAsyncThunkAPI";
+import {getPosts,deletePost} from "../utils/BlogAsyncThunkAPI";
 import Cookie from "js-cookie";
 import { IoIosAddCircleOutline } from "react-icons/io";
 
 function AllPosts() {
+  let count=1;
   let allPosts = useSelector(getAllPosts);
-  if(allPosts){
-    console.log(allPosts.flat())
-    console.log(allPosts.flat().length)
-    allPosts=allPosts.flat()
-  }
+  console.log(allPosts)
+ 
   const postStatus = useSelector(getPostsStatus);
   const postErrors = useSelector(getPostsErrors);
   const dispatch = useDispatch();
-  const token = Cookie.get("token");
+  const token = localStorage.getItem('token');
+  // if(allPosts){
+  //   console.log(Array.isArray(allPosts))
+   
+  // }
 
   useEffect(() => {
     if (token) {
       dispatch(getPosts(token));
-      
     }
+  
   }, [dispatch, token]);
+
+
 
   function handleDelete(postId)
   {
-    
+    console.log(postId)
+    dispatch(deletePost({token,postId}));
   }
   return (
     <div className="w-full min-h-screen bg-gray-100 p-4">
-      <h1 className="poppins-extrabold  text-4xl text-center">
+      <h1 className="poppins-extrabold  text-4xl text-center mt-24">
         See All Your Posts here .......
       </h1>
       {postStatus ? (
@@ -49,22 +54,22 @@ function AllPosts() {
       ) : (
         <div className="w-full max-w-7xl mx-auto">
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-5 p-2">
-            {allPosts &&
+            {Array.isArray(allPosts) &&
               allPosts.map((post) => (
                 <div
                   className="p-4 bg-white rounded-lg shadow-md relative flex flex-col gap-8"
                   key={post.postId}
                 >
                   <p className="absolute top-2 left-2 bg-yellow-300 p-1 px-2 rounded">
-                    {post.postId}
+                    {count++}
                   </p>
                   <h1 className="text-center text-xl font-bold font-serif underline decoration-yellow-300 underline-offset-4 decoration-4">
                     {post.title}
                   </h1>
                   <p className="poppins-light text-justify">
                     {post.content.length > 300
-                      ? post.content.slice(0, 300)
-                      : post.content}
+                      ? post.content.slice(0, 300) + "...." 
+                      : post.content }
                   </p>
                   <div className="pl-2 mt-4">
                     <p className="font-bold">

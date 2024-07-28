@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getUser, login } from "../utils/BlogAsyncThunkAPI";
+import { getUser, login, uploadProfilePic } from "../utils/BlogAsyncThunkAPI";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -18,7 +18,6 @@ export const userSlice = createSlice({
     logout: (state) => {                          // use logout api from BlogAsyncThunkAPI
       state.data = null;
       state.isLoggedIn = false;
-      console.log("logout reducer")
     },
   },
   extraReducers(builder) {
@@ -46,8 +45,10 @@ export const userSlice = createSlice({
         state.loading = false;
         console.log(action.payload.success)
         state.isLoggedIn = action.payload.success;
-        document.cookie = `BlogTankRole=${action.payload.role}`;
-        document.cookie = `token=${action.payload.token}`;
+        localStorage.setItem('token',action.payload.token)
+        
+        // document.cookie = `BlogTankRole=${action.payload.role}`;
+        // document.cookie = `token=${action.payload.token}`;
         toast.success(`🦄 ${action.payload.message}`, {
           position: "top-right",
           autoClose: 4000,
@@ -59,6 +60,21 @@ export const userSlice = createSlice({
           theme: "light",
         });
      
+      });
+    builder
+      .addCase(uploadProfilePic.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(uploadProfilePic.fulfilled, (state, action) => {
+        state.loading = false;
+        // state.user = action.payload; // Assuming payload structure has 'post' object
+        state.error = null;
+        console.log(action.payload)
+      })
+      .addCase(uploadProfilePic.rejected, (state, action) => {
+        state.loading = false;
+        // state.error = action.error.message; // Access error message if available
       });
   },
 });

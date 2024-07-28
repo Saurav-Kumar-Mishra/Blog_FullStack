@@ -23,13 +23,20 @@ function ImgCard() {
       setIndex((prev) => prev + 1);
     }
   }
+
+  // React.useEffect(()=>{
+  //  setInterval(()=>{
+  //     handleNext();
+  //  },5000) 
+  // })
+
   console.log(images);
   console.log(index);
   return (
-    <div className="h-[92vh] flex flex-col justify-center items-center bg-white">
-      <div className="w-full flex justify-center animate-pulse">
+    <div className="h-[100vh] flex flex-col justify-center items-center bg-white">
+      {/* <div className="w-full flex justify-center animate-pulse  mt-10">
         <img  src="./Logo2.png" width="300px" alt="img not found"/>
-      </div>
+      </div> */}
       <div
         style={{
           backgroundImage: `url(${images[index]})`,

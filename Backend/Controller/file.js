@@ -1,7 +1,10 @@
 const fileUpload = require("express-fileupload");
 const nodemailer = require("nodemailer");
 const file = require("../Models/fileUpload");
+const user = require('../Models/user');
 const cloudinary = require("cloudinary").v2;
+const asyncErrorHandler = require("../utils/asyncErrorHandler");
+const { BadRequestError } = require("../Errors/error");
 
 
 
@@ -98,14 +101,19 @@ const imgFileHandle = async (req, res) => {
       success: false,
       message: "file Upload Error",
     });
+    
+
   }
+  const decodedToken = req.token;
+  
   let Files = req.files.file;
-  const videoExt = ["png", "jpg", "jpeg", "svg", "mov"];
+  const imgExt = ["png", "jpg", "jpeg", "svg", "mov"];
 
   Files = Array.isArray(Files) ? Files : [Files];
 
   // checking file name length should be less than 30 character
   for (element of Files) {
+    
     const ext = element.name.indexOf(".") + 1;
     if (element.name.length > 50) {
       return res.json({
@@ -115,7 +123,7 @@ const imgFileHandle = async (req, res) => {
           "file name length exceeded (should be less than or equal to 30)",
         extension: element.name.slice(ext),
       });
-    } else if (!videoExt.includes(element.name.slice(ext))) {
+    } else if (!imgExt.includes(element.name.slice(ext))) {
       return res.json({
         success: false,
         filenameExceedingLength: element.name,
@@ -124,7 +132,35 @@ const imgFileHandle = async (req, res) => {
       });
     }
   }
-  res.json({
+
+  try {
+    const uploadResults = [];
+    for (const element of Files) {
+      const result = await uploadToCloudinary(element.tempFilePath, "Blog");
+      uploadResults.push(result.secure_url);
+    }
+    try{
+   await user.updateOne({_id:decodedToken.id},{profilePic:uploadResults[0]})
+}catch(err)
+{
+ return res.json({
+    success: true,
+    message: "could not upload Files to database",
+  });
+}
+   return res.json({
+      success: true,
+      message: "Files uploaded successfully",
+      totalImagesUploaded: Files.length,
+      imageLinks: uploadResults,
+    });
+  } catch (error) {
+   return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+ return res.json({
     success: true,
     message: "file Uploaded successfully",
     totalVideoFilesUploaded: Files.length,

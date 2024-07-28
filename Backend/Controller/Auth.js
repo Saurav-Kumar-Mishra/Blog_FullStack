@@ -1,6 +1,8 @@
 const user = require("../Models/user.js");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+const bcrypt = require("bcrypt");
+
 const asyncErrorHandler = require("../utils/asyncErrorHandler.js");
 const {
   ValidationError,
@@ -95,56 +97,32 @@ async function signUp(req, res, next) {
 
 async function login(req, res) {
   const { email, password } = req.body;
+
   if (!email || !password) {
     throw new BadRequestError("please fill all the details");
   }
-
   let userExist = await user.findOne({ email });
   if (!userExist) {
-    throw new UnauthorizedError();
+    throw new UnauthorizedError("email do not match !");
   }
-
+  
+  const passwordVerified = await bcrypt.compare(password, userExist.password);
+  console.log(passwordVerified)
+  if (!passwordVerified) {
+    throw new UnauthorizedError("email or password do not match !");
+  }
   if (!userExist.isVerified) {
     throw new UnauthorizedError("user is not verified");
   }
 
   const token = await generateToken(userExist);
-
-  console.log("loginToken", token);
+  
   return res.json({
     success: true,
     message: "Successfull Login",
     token: token,
-    role:userExist.role
+    role: userExist.role,
   });
-
-  // const payload = {
-  //   email: userExist.email,
-  //   role: userExist.role,
-  //   id: userExist._id,
-  // };
-  // const option = {
-  //   expires: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
-  //   httpOnly: true,
-  // };
-
-  // if (await bcrypt.compare(password, userExist.password)) {
-  //   let token = jwt.sign(payload, process.env.SECRET, { expiresIn: "4h" });
-
-  //   userExist = userExist.toObject();
-  //   userExist.token = token;
-  //   console.log(userExist);
-  //   userExist.password = "";
-  //   res.cookie("token", token, option).status(200).json({
-  //     success: true,
-  //     token,
-  //     userExist,
-  //     message: "Successfull Login",
-  //   });
-  //   // res.redirect(`/${userExist.role}`)
-  // } else {
-  //   throw new UnauthorizedError("password do not match");
-  // }
 }
 
 async function logout(req, res) {
@@ -164,7 +142,6 @@ async function logout(req, res) {
     message: "logout successfull",
   });
 }
-
 
 async function verifyUser(req, res) {
   const { token } = req.params;
